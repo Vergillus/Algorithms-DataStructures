@@ -1,0 +1,137 @@
+#include "stdafx.h"
+#include <iostream>
+
+struct DLNode 
+{
+	int data;
+	DLNode *next;
+	DLNode *prev;
+};
+
+
+DLNode* CreateNewNode(const int value)
+{
+	DLNode* newNode = new DLNode;
+	newNode->data = value;
+	newNode->next = newNode->prev = nullptr;
+
+	return newNode;
+}
+
+DLNode* IterativeInsert(DLNode* head, const int value)
+{
+	if (head == nullptr){return CreateNewNode(value);}
+
+	DLNode* temp = head;
+
+	while (temp->next != nullptr)
+	{
+		temp = temp->next;
+	}
+	temp->next = CreateNewNode(value);
+	temp->next->prev = temp;	
+
+	return head;
+}
+
+DLNode* IndexedInsert(DLNode* head, const int value, int index)
+{
+	if (head == nullptr){return head;}
+
+	DLNode* temp = head;
+	int num = index;
+
+	if (index == 0) // Insert new head node
+	{
+		DLNode* tmp = CreateNewNode(value);
+		head->prev = tmp;
+		tmp->next = head;
+		head = tmp;
+		return head;
+	}
+
+	while (num != 0)
+	{
+		if (temp == nullptr)
+		{
+			std::cout << "List index breached. CAN NOT add to element to index  "<< index << "\n";
+			return head;
+		}
+
+		temp = temp->next;
+		num--;
+	}
+	DLNode* temp2 = CreateNewNode(value);
+	temp2->next = temp;
+	temp2->prev = temp->prev;
+	temp->prev->next = temp2;
+	temp->prev = temp2;
+
+	return head;
+
+}
+
+DLNode* DeleteAtIndex(DLNode* head, const int index)
+{
+	
+	int indx = index;
+	DLNode* temp = head;
+
+	if (indx == 0) // Delete head node
+	{
+		head = temp->next;
+		head->prev = nullptr;
+		free(temp);
+		return head;
+	}
+
+	while (indx !=0)
+	{
+		if (temp == nullptr)
+		{
+			std::cout << "List index breached. CAN NOT delete element at  " << index << "\n";
+			break;
+		}
+
+		temp = temp->next;
+		indx--;
+	}
+	DLNode* temp2 = temp;
+	
+	temp2->next->prev = temp2->prev;
+	temp2->prev->next = temp2->next;	
+	free(temp2);
+
+	return head;
+
+}
+
+DLNode* Search(DLNode* head, const int value)
+{
+	if (head == nullptr) { return head;}
+
+	DLNode* temp = head;
+
+	while (temp->data != value)
+	{
+		if (temp->next == nullptr)
+		{
+			std::cout << "The item is not in the list" << "\n";
+			return nullptr;
+		}
+
+		temp = temp->next;
+	}
+
+	return temp;
+}
+
+
+void Print(DLNode* head)
+{
+	if (head == nullptr) {return;}
+
+	std::cout << "List element : " << head->data << "\n";
+
+	Print(head->next);
+}
