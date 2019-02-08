@@ -1,0 +1,48 @@
+#include <string>
+#include <stack>
+
+// Reverse the given string
+void Reverse(std::string &str)
+{
+	int head = 0;
+	int tail = str.size() -1 ;
+	
+
+	while (head <= tail)
+{
+		char temp = str[head];
+		str[head] = str[tail];
+		str[tail] = temp;
+		head++;
+		tail--;
+	}
+	std::cout <<"\nReversed: " << str <<"\n";
+}
+
+// Check for paranthesis using stack 
+bool CheckForParanthesis(std::string &str)
+{
+	std::stack<char> temp;
+
+	for (unsigned int i = 0; i < str.size(); i++)
+	{
+		if (str[i] == '(' || str[i] == '{' || str[i] == '[')
+		{
+			temp.push(str[i]);
+		}
+		else
+		{
+			if (temp.empty() || temp.top() != ')' || temp.top() != '}' || temp.top() != ']')
+			{
+				return false;
+			}
+			else
+			{
+				temp.pop();
+			}
+		}
+	}
+
+	return temp.empty() ? true : false;
+
+}
