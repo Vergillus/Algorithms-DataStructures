@@ -1,0 +1,147 @@
+#include "stdafx.h"
+#include <iostream>
+#include <cmath>
+#include <queue>
+
+struct Node
+{
+	int data;
+	Node* left;
+	Node* right;
+};
+
+
+Node* CreateNewNode(int value)
+{
+	Node* temp = new Node; //(Node*) malloc(sizeof(Node));
+	temp->data = value;
+	temp->left = temp->right = nullptr;
+
+	return temp;
+}
+
+Node* FindMin(Node* root) // C
+{
+	while (root->left != NULL) root = root->left;
+	return root;	
+}
+
+Node* InsertBST(Node *node, int value)
+{
+	if (node == nullptr) // Create a root node
+	{
+		return CreateNewNode(value);		
+	}
+	
+	if (value <= node->data)
+		node->left = InsertBST(node->left, value);
+	else if (value > node->data)
+		node->right = InsertBST(node->right, value);
+
+	return node;
+
+}
+
+Node* DeleteFromBST(Node* root, int value)
+{
+	if (root == nullptr) return root;
+
+	if (value <= root->data) root->left = DeleteFromBST(root->left, value);
+	else if (value > root->data) root->right = DeleteFromBST(root->right, value);
+	else // found the node now delete it
+	{
+		// Case 1 : No child
+		if (root->left == nullptr && root->right == nullptr)
+		{
+			delete root;
+			root = nullptr;			
+		}
+		
+		// Case 2 : One child
+		else if (root->left == nullptr)
+		{
+			Node* temp = root;
+			root = root->right;
+			delete temp;
+		}
+		else if (root->left == nullptr)
+		{
+			Node* temp = root;
+			root = root->right;
+			delete temp;
+		}
+
+		// Case 3 : Two children
+		else
+		{
+			Node* temp = FindMin(root->right);
+			root->data = temp->data;
+			root->right = DeleteFromBST(root->right, temp->data);
+		}
+	}
+
+	return root;
+}
+
+Node* SearchBST(Node* root, int value)
+{
+	if (value == root->data || root == nullptr)
+		return root;
+
+	else if (value < root->data)
+		return SearchBST(root->left, value);
+
+	return SearchBST(root->right, value);
+}
+
+void InOrder(Node* root) // Complexity O(n)
+{
+	if (root == nullptr) return;
+	
+	InOrder(root->left);
+	std::cout << "Tree element : " << root->data << "\n";
+	InOrder(root->right);
+
+}
+
+void PreOrder(Node *root)  // Complexity O(n)
+{
+	if (root == nullptr) return;
+
+	std::cout << "Tree element : " << root->data << "\n";
+	PreOrder(root->left);
+	PreOrder(root->right);
+}
+
+void PostOrder(Node* root)  // Complexity O(n)
+{
+	if (root == nullptr) return;
+
+	PostOrder(root->left);
+	PostOrder(root->right);
+	std::cout << "Tree element : " << root->data << "\n";
+}
+
+void LevelOrder(Node* root) // Complexity O(n)
+{
+	if (root == nullptr) return;
+	std::queue<Node*> Q;
+	Q.push(root);
+
+	while (!Q.empty())
+	{
+		Node* current = Q.front();
+		std::cout << current->data << " ";
+		if (current->left != nullptr) Q.push(current->left);
+		if (current->right != nullptr) Q.push(current->right);		
+		Q.pop();
+	}
+
+}
+
+int FindHeight(Node* root)
+{
+	if (root == nullptr) return -1;
+
+	return std::max(FindHeight(root->left), FindHeight(root->right)) + 1;
+}
