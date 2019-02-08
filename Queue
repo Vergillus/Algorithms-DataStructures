@@ -1,0 +1,59 @@
+#include "stdafx.h"
+#include <iostream>
+
+
+const int QUEUE_SIZE = 10;
+
+class MYQueue 
+{
+	int rear, front;
+	int qArr[QUEUE_SIZE];
+
+public:
+
+	MYQueue() : rear(-1), front(-1) {};
+
+	void Enqueue(const int value) 
+	{
+
+		if ((rear + 1) % QUEUE_SIZE == front) return; // the array is full
+
+		else if (IsEmpty())
+		{
+			rear = 0;
+			front = 0;			
+		}
+
+		else { rear = (rear + 1) % QUEUE_SIZE;}
+		
+		qArr[rear] = value;
+
+	}
+
+	void Dequeue()
+	{
+		if (IsEmpty()) return;
+
+		else if (front == rear) front = rear = -1;
+
+		else front = (front + 1) % QUEUE_SIZE;	
+	}
+
+	void PrintQ()
+	{
+  	int temp = front;
+
+		std::cout << "Queue list elements : ";
+		while ((temp + 1) % QUEUE_SIZE != front)
+		{
+			std::cout << qArr[temp] << " ";
+			temp++;
+		}		
+		std::cout << "\n";
+	}
+
+	int Front() { return !IsEmpty() ? qArr[front] : 0 ; }
+
+	bool IsEmpty() {return (front == -1 && rear == -1) ? true : false;}
+
+};
