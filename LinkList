@@ -1,0 +1,274 @@
+#include "stdafx.h"
+#include <iostream>
+#include <stack>
+
+int listLenght = 0;
+
+struct LLNode {
+
+	int data;
+	LLNode* next;
+};
+
+LLNode* CreateNewNode(const int value)
+{
+	LLNode* temp = new LLNode; // (LLNode*) malloc(sizeof(LLNode);
+	temp->data = value;
+	temp->next = nullptr;
+
+	return temp;
+}
+
+LLNode* InsertLinear(LLNode* head, const int value)
+{
+	if (head == nullptr)
+	{
+		return CreateNewNode(value);		
+	}
+
+	if (head->next == nullptr)
+	{
+		head->next = InsertLinear(head->next, value);
+		listLenght++;
+	}
+	else
+	{
+		head = InsertLinear(head->next, value);
+	}
+	
+}
+
+LLNode* IterativeInsert(LLNode* head, const int value)
+{
+	if (head == nullptr) { return CreateNewNode(value);}
+
+	LLNode* temp = head;	// Temp points addressess where head points, meaning that temp can effect the values of head.
+	while (temp->next != nullptr)
+	{
+		temp = temp->next;
+	}
+	temp->next = CreateNewNode(value);
+	listLenght++;
+
+	return head;
+}
+
+LLNode* InsertArbitrary(LLNode* head, const int value, int insertPos)
+{
+	if (head == nullptr || insertPos > listLenght)
+	{
+		return nullptr;
+	}
+
+	// The case where we want to change the head node
+	if (insertPos == 1) // head needs to be global or a pointer to pointer
+	{
+		LLNode* temp = CreateNewNode(value);
+		temp->next = head;
+		head = temp;
+	}
+
+	if (insertPos - 2 > 0) // insertPos - 2 > 0
+	{
+		insertPos--;
+		head = InsertArbitrary(head->next, value, insertPos);
+	}
+	else
+	{
+		LLNode* temp = CreateNewNode(value);
+		temp->next = head->next;
+		head->next = temp;
+		listLenght++;
+	}
+
+	return head;
+}
+
+LLNode* DeleteIndexFromList(LLNode* head, int index)
+{
+	if (head == nullptr) {return nullptr;}
+
+	//if (index == 1) // The case which we want to delete the head node
+	//{
+	//	LLNode* temp = head; 
+	//	head = temp->next; // Head now points to second node.
+	//	free(temp);
+	//	return head;
+	//}
+
+	if (index -1 > 0)
+	{
+		index--;
+		head = DeleteIndexFromList(head->next, index);
+	}
+	else
+	{
+		LLNode* temp = head->next;
+		head->next = temp->next;
+		free(temp);
+		listLenght--;
+	}
+
+
+}
+
+void DeleteAtIndex(LLNode* head, const int index)
+{
+	LLNode* temp1 = head;
+	if (index == 1)
+	{
+		head = temp1->next;
+		free(temp1);
+		return;
+	}
+	
+	for (int i = 0; i < index - 2; i++)
+	{
+		temp1 = temp1->next;
+	}
+	// temp1 now points to index - 1 th node
+	LLNode* temp2 = temp1->next;
+	temp1->next = temp2->next;
+	free(temp2);
+}
+
+LLNode* DeleteValueFromList(LLNode* head, const int value)
+{
+	if (head == nullptr) { return nullptr; }
+
+	if (head->next->data != value)
+	{
+		head = DeleteValueFromList(head->next, value);
+	}
+	else
+	{
+		head->next = head->next->next;
+		listLenght--;
+	}
+
+}
+
+void PrintFirstToLastOrder(const LLNode* head) 
+{
+	if (head == nullptr) return;
+	
+	std::cout << "LL element : " << head->data << "\n";
+	PrintFirstToLastOrder(head->next);
+}
+
+void PrintLastToFirstOrder(const LLNode* head)
+{
+	if (head == nullptr) return;
+
+	PrintLastToFirstOrder(head->next);
+	std::cout << "LL element : " << head->data << "\n";
+	
+}
+
+LLNode* SearchLL(LLNode* head, const int value)
+{
+	if (head == nullptr) return nullptr;	
+
+	if (head->data == value)
+	{
+		return head;
+	}	
+	head = SearchLL(head->next, value);
+}
+
+LLNode* IterativeReverse(LLNode* head)
+{
+	LLNode *current, *prev, *nextNode;
+	current = head;
+	prev = nullptr;
+
+	while (current !=nullptr)
+	{
+		nextNode = current->next;
+		current->next = prev;
+		prev = current;
+		current = nextNode;
+	}
+	head = prev;
+	return head;
+}
+
+// Does not work properly.
+LLNode* Reverse(LLNode* head)
+{
+	// Exit condition
+	if (head->next == nullptr)
+	{
+		return head;		
+	}
+	
+	Reverse(head->next);
+	//This code will execute after head reaches the last element of the list.
+	LLNode* temp = head->next;
+	temp->next = head;
+	head->next = nullptr; 	
+	
+}
+
+LLNode* ReverseWithStack(LLNode* head)
+{
+	if (head == nullptr) return head;
+
+	std::stack<LLNode*> LLStack;
+	LLNode* temp = head;
+	
+	while (temp != nullptr)
+	{
+		LLStack.push(temp);
+		temp = temp->next;		
+	}
+	temp = LLStack.top();
+	head = temp;
+	LLStack.pop();
+
+	while (!LLStack.empty())
+	{		
+		temp->next = LLStack.top();
+		LLStack.pop();
+		temp = temp->next;
+	}
+	temp->next = nullptr;
+
+	return head;
+}
+
+
+LLNode* RemoveDuplicates(LLNode* head)
+{
+	if (head == nullptr) { return head; }
+
+	LLNode* first, *prev, *last;
+	first = prev = head;
+	last = head->next;
+
+	while (first->next != nullptr)
+	{
+		while (last != nullptr)
+		{
+			if (first->data == last->data)
+			{
+				prev->next = last->next;
+				last = last->next;
+			}
+
+			prev = prev->next;
+			last = (last != nullptr) ? last->next : nullptr;
+		}
+
+		/*if (first->data == last->data)
+		{
+			prev->next = last->next;			
+		}*/
+
+		first = first->next;
+		prev = first;
+		last = first->next;
+	}
+
+	return head;
+}
