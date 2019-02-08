@@ -1,0 +1,64 @@
+#include <iostream>
+
+const int STACK_SIZE = 10;
+
+class MYStack 
+{
+public:
+
+	MYStack(): top(-1) {};
+
+	void Push(const int &value)
+	{
+		if (top == STACK_SIZE - 1)
+		{
+			std::cout << "Error: Stack overflow\n";
+			return;
+		}
+
+		top = top + 1;
+		arr[top] = value;
+	}
+
+	void Pop()
+	{
+		if (top == -1)
+		{
+			std::cout << "Error: No element ot pop\n";
+			return;
+		}
+
+		top = top - 1;
+	}
+
+	void PrintStack()
+	{
+		for (int i = 0; i <= top; i++) {
+			std::cout << arr[i] << "\n";
+		}
+	}
+
+	int CreateNCopyArray()
+	{
+		int temp[sizeof(arr) * 2];
+
+		for (int i = 0; i <= top; i++)
+		{
+			temp[i] = arr[i];
+		}
+	
+	}
+
+	int Top() { return arr[top]; }
+
+	bool IsEmpty() { return top == -1 ? true : false; }
+
+
+
+protected:
+
+	int arr[STACK_SIZE];
+	int top;
+
+};
+
