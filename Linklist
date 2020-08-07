@@ -193,7 +193,6 @@ LLNode* IterativeReverse(LLNode* head)
 	return head;
 }
 
-// Does not work properly.
 LLNode* Reverse(LLNode* head)
 {
 	// Exit condition
@@ -202,12 +201,12 @@ LLNode* Reverse(LLNode* head)
 		return head;		
 	}
 	
-	Reverse(head->next);
 	//This code will execute after head reaches the last element of the list.
-	LLNode* temp = head->next;
-	temp->next = head;
-	head->next = nullptr; 	
+	LLNode* tmp = Reverse(head->next);	
+	head->next->next = head	
+	head->next = nullptr; 
 	
+	return tmp;	
 }
 
 LLNode* ReverseWithStack(LLNode* head)
