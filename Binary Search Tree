@@ -88,10 +88,11 @@ Node* SearchBST(Node* root, int value)
 	if (value == root->data || root == nullptr)
 		return root;
 
-	else if (value < root->data)
+	else if (value < root->data && root->left)
 		return SearchBST(root->left, value);
-
-	return SearchBST(root->right, value);
+	else if (value > root->data && root->right)
+		return SearchBST(root->right, value);
+	else return NULL;	
 }
 
 void InOrder(Node* root) // Complexity O(n)
